@@ -59,7 +59,7 @@ function model = select_best_model(X, y, yStd, responseName, settings)
         weights = ones(size(y));
     end
 
-    results = repmat(struct(), 0, 1);
+    results = [];
 
     baselinePred = mean(y) * ones(size(y));
     baselineMetrics = compute_metrics(y, baselinePred);
@@ -138,7 +138,11 @@ function model = select_best_model(X, y, yStd, responseName, settings)
                                 - 0.02 * (result.nTerms / max(n, 1)) ...
                                 - 0.03 * max(overfitGap, 0);
 
-        results(end+1,1) = result; %#ok<AGROW>
+        if isempty(results)
+            results = result;
+        else
+            results(end+1,1) = result; %#ok<AGROW>
+        end
 
         fprintf('\nCandidate: %-22s | fit=%-5s | terms=%2d\n', ...
             result.name, result.fitType, result.nTerms);
